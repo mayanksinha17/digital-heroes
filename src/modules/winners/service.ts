@@ -19,7 +19,6 @@ export class WinnerService {
    */
   static async getUserWinnings(userId: string): Promise<WinnerWithDetails[]> {
     const supabase = createClient();
-    const adminSupabase = createAdminClient();
 
     const { data: winners, error } = await supabase
       .from("draw_winners")
@@ -34,7 +33,7 @@ export class WinnerService {
     if (!winners || winners.length === 0) return [];
 
     const winnerIds = winners.map((w) => w.id);
-    const { data: proofs } = await adminSupabase
+    const { data: proofs } = await supabase
       .from("winner_proofs")
       .select("*")
       .in("winner_id", winnerIds)
@@ -46,7 +45,7 @@ export class WinnerService {
       for (const proof of proofs) {
         let signedUrl: string | undefined;
         try {
-          const { data: signed } = await adminSupabase.storage
+          const { data: signed } = await supabase.storage
             .from("winner-proofs")
             .createSignedUrl(proof.storage_path, 900); // 15 mins TTL
           signedUrl = signed?.signedUrl;
