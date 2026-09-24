@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, ArrowRight, Heart } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle2, Heart, MailCheck } from "lucide-react";
 import Link from "next/link";
 
 function SubmitButton() {
@@ -24,6 +24,50 @@ function SubmitButton() {
 export function SignupForm() {
   const [state, formAction] = useFormState(signupAction, { success: false });
   const [charityPercent, setCharityPercent] = useState<number>(10);
+
+  if (state.requiresConfirmation) {
+    return (
+      <div className="space-y-6 text-center py-2">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-emerald-500/10 border border-brand-emerald-500/20 text-brand-emerald-400">
+          <MailCheck className="h-7 w-7" />
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold tracking-tight text-white">
+            Confirm your email address
+          </h3>
+          <p className="text-sm text-slate-300">
+            We&apos;ve sent a confirmation link to:
+          </p>
+          <p className="text-sm font-semibold text-brand-emerald-400 bg-brand-emerald-950/40 py-1.5 px-3 rounded-lg border border-brand-emerald-500/20 inline-block break-all">
+            {state.email}
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-xs text-slate-400 text-left space-y-2">
+          <p className="font-medium text-slate-300">Next Steps:</p>
+          <ol className="list-decimal list-inside space-y-1 text-slate-400">
+            <li>Open the confirmation email in your inbox.</li>
+            <li>Click the link inside to verify your email address.</li>
+            <li>Return to Digital Heroes and sign in to access your dashboard.</li>
+          </ol>
+        </div>
+
+        <div className="pt-2">
+          <Link href="/login">
+            <Button className="w-full">
+              Proceed to Sign In
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          Didn&apos;t receive the email? Check your spam/junk folder.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form action={formAction} className="space-y-4">

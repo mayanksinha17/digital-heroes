@@ -6,8 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, ArrowRight } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle2, Info } from "lucide-react";
 import Link from "next/link";
+
+interface LoginFormProps {
+  initialError?: string;
+  isVerified?: boolean;
+  initialMessage?: string;
+}
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -20,15 +26,33 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ initialError, isVerified, initialMessage }: LoginFormProps = {}) {
   const [state, formAction] = useFormState(loginAction, { success: false });
+
+  const errorMessage = state.error || (!state.success && initialError ? initialError : undefined);
 
   return (
     <form action={formAction} className="space-y-4">
-      {state.error && (
+      {errorMessage && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{state.error}</AlertDescription>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      {isVerified && !state.error && (
+        <Alert className="border-brand-emerald-500/30 bg-brand-emerald-950/40 text-brand-emerald-300">
+          <CheckCircle2 className="h-4 w-4 text-brand-emerald-400" />
+          <AlertDescription>
+            Your email has been confirmed! Please sign in with your credentials to access your dashboard.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {initialMessage && !state.error && !isVerified && (
+        <Alert className="border-slate-700 bg-slate-900/60 text-slate-300">
+          <Info className="h-4 w-4 text-brand-emerald-400" />
+          <AlertDescription>{initialMessage}</AlertDescription>
         </Alert>
       )}
 

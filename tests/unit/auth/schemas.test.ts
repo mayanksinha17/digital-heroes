@@ -11,6 +11,17 @@ describe("Auth Schemas", () => {
       expect(result.success).toBe(true);
     });
 
+    it("trims and lowercases email address", () => {
+      const result = loginSchema.safeParse({
+        email: "  Subscriber@Example.COM  ",
+        password: "password123",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.email).toBe("subscriber@example.com");
+      }
+    });
+
     it("rejects invalid email and short password", () => {
       const result = loginSchema.safeParse({
         email: "not-an-email",
@@ -30,6 +41,19 @@ describe("Auth Schemas", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.charityPercent).toBe(10);
+      }
+    });
+
+    it("normalizes and trims email and name during signup", () => {
+      const result = signupSchema.safeParse({
+        fullName: "  Tiger Woods  ",
+        email: "  Tiger@Example.COM  ",
+        password: "securepassword",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.fullName).toBe("Tiger Woods");
+        expect(result.data.email).toBe("tiger@example.com");
       }
     });
 
